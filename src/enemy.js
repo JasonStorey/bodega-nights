@@ -33,7 +33,7 @@ define(['Phaser'], function(Phaser) {
     };
 
     Enemy.prototype.update = function update() {
-        if(this.sprite.body.x - this.sprite.body.halfWidth < this.game.world.width) {
+        if(this.sprite.body.x < this.game.world.width + this.sprite.body.halfWidth) {
             this.sprite.body.velocity.x = this.config.maxVelocity.x;
         } else {
             this.reset();
