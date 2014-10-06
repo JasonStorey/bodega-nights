@@ -3,6 +3,7 @@ define(['Phaser'], function (Phaser) {
         this.game = game;
         this.acceleration = 100;
         this.maxVelocity = 2000;
+        this.attacking = false;
     }
 
     Player.prototype.preload = function preload() {
@@ -10,7 +11,7 @@ define(['Phaser'], function (Phaser) {
     };
 
     Player.prototype.create = function create() {
-        this.crosshairs = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'crosshair');
+        this.crosshairs = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'crosshair');
         this.crosshairs.anchor.setTo(0.5, 0.5);
         this.crosshairs.scale.setTo(0.5, 0.5);
 
@@ -19,9 +20,16 @@ define(['Phaser'], function (Phaser) {
         this.crosshairs.body.collideWorldBounds = true;
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.firekey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     };
 
     Player.prototype.update = function update() {
+
+        if (this.firekey.isDown) {
+            this.attack();
+        } else {
+            this.attacking = false;
+        }
 
         if (this.cursors.left.isDown) {
             this.crosshairs.body.velocity.x -= this.acceleration;
@@ -38,6 +46,16 @@ define(['Phaser'], function (Phaser) {
         } else {
             this.crosshairs.body.velocity.y = this.crosshairs.body.velocity.y * 0.9;
         }
+    };
+
+    Player.prototype.checkHitboxes = function checkHitboxes(object) {
+        if(this.attacking === true && this.crosshairs.overlap(object.sprite)) {
+            object.damage();
+        }
+    };
+
+    Player.prototype.attack = function attack() {
+        this.attacking = true;
     };
 
     return Player;

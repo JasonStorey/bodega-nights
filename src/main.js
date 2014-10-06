@@ -1,6 +1,7 @@
-define(['Phaser', 'player'], function (Phaser, Player) {
+define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
     var game,
-        player;
+        player,
+        enemy;
 
     function init(containerElement) {
         game = new Phaser.Game('100', '100', Phaser.AUTO, containerElement, {
@@ -9,19 +10,25 @@ define(['Phaser', 'player'], function (Phaser, Player) {
             update: update
         });
 
+        enemy = new Enemy(game);
         player = new Player(game);
     }
 
     function preload() {
         game.stage.backgroundColor = '#ffffff';
+        enemy.preload();
         player.preload();
     }
 
     function create() {
+        enemy.create();
         player.create();
     }
 
     function update() {
+        player.checkHitboxes(enemy);
+
+        enemy.update();
         player.update();
     }
 
