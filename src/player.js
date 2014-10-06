@@ -1,4 +1,5 @@
 define(['Phaser'], function (Phaser) {
+
     function Player(game) {
         this.game = game;
         this.acceleration = 100;
@@ -20,6 +21,7 @@ define(['Phaser'], function (Phaser) {
         this.crosshairs.scale.setTo(0.5, 0.5);
 
         this.game.physics.enable(this.crosshairs, Phaser.Physics.ARCADE);
+        this.crosshairs.body.setSize(10, 10);
         this.crosshairs.body.maxVelocity.setTo(this.maxVelocity, this.maxVelocity);
         this.crosshairs.body.collideWorldBounds = true;
 
@@ -47,7 +49,7 @@ define(['Phaser'], function (Phaser) {
         } else if (this.cursors.right.isDown) {
             this.crosshairs.body.velocity.x += this.acceleration;
         } else {
-            this.crosshairs.body.velocity.x = this.crosshairs.body.velocity.x * 0.9;
+            this.crosshairs.body.velocity.x = this.crosshairs.body.velocity.x * 0.7;
         }
 
         if (this.cursors.up.isDown) {
@@ -55,7 +57,7 @@ define(['Phaser'], function (Phaser) {
         } else if (this.cursors.down.isDown) {
             this.crosshairs.body.velocity.y += this.acceleration;
         } else {
-            this.crosshairs.body.velocity.y = this.crosshairs.body.velocity.y * 0.9;
+            this.crosshairs.body.velocity.y = this.crosshairs.body.velocity.y * 0.7;
         }
     };
 
