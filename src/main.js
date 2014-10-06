@@ -1,7 +1,6 @@
-define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
+define(['Phaser', 'player', 'enemies'], function (Phaser, Player, enemies) {
     var game,
-        player,
-        enemy;
+        player;
 
     function init(containerElement) {
         game = new Phaser.Game('100', '100', Phaser.CANVAS, containerElement, {
@@ -11,29 +10,31 @@ define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
             render: render
         });
 
-        enemy = new Enemy(game);
+        enemies.init(game);
         player = new Player(game);
     }
 
     function preload() {
         game.stage.backgroundColor = '#ffffff';
-        enemy.preload();
+        enemies.preload();
         player.preload();
     }
 
     function create() {
-        enemy.create();
+        enemies.create(10);
         player.create();
     }
 
     function update() {
-        player.hitboxes.forEachAlive(function(hitbox) {
-            if(enemy.sprite.body.hitTest(hitbox.x, hitbox.y)) {
-                enemy.damage();
-            }
+        enemies.getLivingEnemies().forEach(function(enemy) {
+            player.hitboxes.forEachAlive(function(hitbox) {
+                if(enemy.hitTest(hitbox.x, hitbox.y)) {
+                    enemy.damage(1);
+                }
+            });
         });
 
-        enemy.update();
+        enemies.update();
         player.update();
     }
 
