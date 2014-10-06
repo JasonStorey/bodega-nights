@@ -27,7 +27,11 @@ define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
     }
 
     function update() {
-        player.checkHitboxes(enemy);
+        player.hitboxes.forEachAlive(function(hitbox) {
+            if(enemy.sprite.body.hitTest(hitbox.x, hitbox.y)) {
+                enemy.damage();
+            }
+        });
 
         enemy.update();
         player.update();

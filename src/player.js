@@ -65,14 +65,6 @@ define(['Phaser'], function (Phaser) {
 
     };
 
-    Player.prototype.checkHitboxes = function checkHitboxes(object) {
-        this.hitboxes.forEachAlive(function(hitbox) {
-            if(object.sprite.body.hitTest(hitbox.x, hitbox.y)) {
-                object.damage();
-            }
-        });
-    };
-
     Player.prototype.attack = function attack() {
         var hitbox;
 
