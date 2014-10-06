@@ -3,14 +3,18 @@ define(['Phaser'], function (Phaser) {
         this.game = game;
         this.acceleration = 100;
         this.maxVelocity = 2000;
-        this.attacking = false;
+        this.fireRate = 500;
+        this._nextFire = 0;
     }
 
     Player.prototype.preload = function preload() {
         this.game.load.image('crosshair', './assets/crosshair.png');
+        this.game.load.image('bullet-hole', './assets/bullet-hole.gif');
     };
 
     Player.prototype.create = function create() {
+        var hitbox;
+
         this.crosshairs = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'crosshair');
         this.crosshairs.anchor.setTo(0.5, 0.5);
         this.crosshairs.scale.setTo(0.5, 0.5);
@@ -18,6 +22,15 @@ define(['Phaser'], function (Phaser) {
         this.game.physics.enable(this.crosshairs, Phaser.Physics.ARCADE);
         this.crosshairs.body.maxVelocity.setTo(this.maxVelocity, this.maxVelocity);
         this.crosshairs.body.collideWorldBounds = true;
+
+        this.hitboxes = this.game.add.group();
+
+        for(var i = 0; i < 10; i++) {
+            hitbox = this.game.add.sprite(10, 10, 'bullet-hole');
+            hitbox.anchor.setTo(0.5, 0.5);
+            hitbox.kill();
+            this.hitboxes.add(hitbox);
+        }
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.firekey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -27,8 +40,6 @@ define(['Phaser'], function (Phaser) {
 
         if (this.firekey.isDown) {
             this.attack();
-        } else {
-            this.attacking = false;
         }
 
         if (this.cursors.left.isDown) {
@@ -48,14 +59,30 @@ define(['Phaser'], function (Phaser) {
         }
     };
 
+    Player.prototype.render = function render() {
+
+    };
+
     Player.prototype.checkHitboxes = function checkHitboxes(object) {
-        if(this.attacking === true && this.crosshairs.overlap(object.sprite)) {
-            object.damage();
-        }
+        this.hitboxes.forEachAlive(function(hitbox) {
+            if(object.sprite.body.hitTest(hitbox.x, hitbox.y)) {
+                object.damage();
+            }
+        });
     };
 
     Player.prototype.attack = function attack() {
-        this.attacking = true;
+        var hitbox;
+
+        if (this.game.time.now < this._nextFire) {
+            return;
+        }
+
+        hitbox = this.hitboxes.getFirstDead();
+        hitbox.lifespan = 100;
+        hitbox.reset(this.crosshairs.body.center.x, this.crosshairs.body.center.y, 1);
+
+        this._nextFire = this.game.time.now + this.fireRate;
     };
 
     return Player;

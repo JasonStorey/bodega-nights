@@ -4,10 +4,11 @@ define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
         enemy;
 
     function init(containerElement) {
-        game = new Phaser.Game('100', '100', Phaser.AUTO, containerElement, {
+        game = new Phaser.Game('100', '100', Phaser.CANVAS, containerElement, {
             preload: preload,
             create: create,
-            update: update
+            update: update,
+            render: render
         });
 
         enemy = new Enemy(game);
@@ -30,6 +31,10 @@ define(['Phaser', 'player', 'enemy'], function (Phaser, Player, Enemy) {
 
         enemy.update();
         player.update();
+    }
+
+    function render() {
+        player.render();
     }
 
     return {
